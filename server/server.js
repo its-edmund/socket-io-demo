@@ -1,8 +1,19 @@
-const express = require('express');
+const app = require('express')();
+const server = require('http').Server(app);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST']
+  }
+});
 const PORT = process.env.PORT || 5000;
 
-const app = express();
+io.on('connection', (socket) => {
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  })
+})
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 })
